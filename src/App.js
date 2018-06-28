@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Form from './Form';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8545');
 
@@ -8,11 +9,16 @@ class App extends Component {
   state = {
     accounts: [],
     balance: 0,
-    network: ''        
+    network: '',
+    inputValue: '',
   }
 
   componentDidMount(){
     this.getAddress();
+  }
+
+  setInputValue = (value) => {
+    this.setState({inputValue: value});
   }
   
   //sets accounts state
@@ -69,6 +75,9 @@ class App extends Component {
         <li>Account address: {this.state.accounts[0]}</li>
         <li>Account balance: {this.state.balance}</li>
         <li>Current Network: {this.state.network}</li>
+	<br />
+	<Form setInputValue={this.setInputValue} />
+	<li>You wrote: {this.state.inputValue}</li>
       </div>
     );
   }
