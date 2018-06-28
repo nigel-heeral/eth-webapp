@@ -16,16 +16,12 @@ class App extends Component {
   }
   
   //sets accounts state
-  getAddress = () => {
+  getAddress = async () =>{
     //accounts is an array containing account addresses belonging to user
-    var accounts = web3.eth.getAccounts(function(err, accounts){ 
-      return accounts
-    })
+    var accounts = await web3.eth.getAccounts();
     //set accounts state and call getBalance()
-    accounts.then(accounts => {
-      this.setState({accounts: accounts})
-      this.getBalance();
-    })
+    this.setState({accounts: accounts});
+    this.getBalance();
   }
 
   //sets balance state
@@ -44,17 +40,21 @@ class App extends Component {
     //string network is set to ethereum network user is currently running
     var network = await web3.eth.net.getNetworkType();
     //clean up what is returned
-    if(network === 'main'){
-      network = 'Main Ethereum Network'
-    }
-    if(network === 'ropsten'){
-      network = 'Ropsten Test Network'
-    }
-    if(network === 'kovan'){
-      network = 'Kovan Test Network'
-    }
-    if(network === 'rinkeby'){
-      network = 'Rinkeby Test Network'
+    switch(network){
+      case 'main': 
+        network = 'Main Ethereum Network';
+        break;
+      case 'ropsten': 
+        network = 'Ropsten Test Network';
+        break;
+      case 'kovan': 
+        network = 'Kovan Test Network';
+        break;
+      case 'rinkeby': 
+        network = 'Rinkeby Test Network';
+        break;
+      default:
+        network = 'Unknown Network';
     }
     //set state
     this.setState({network: network})
