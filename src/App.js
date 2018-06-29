@@ -1,8 +1,27 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import './App.css';
 import Form from './Form';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8545');
+
+
+// Create a Wrapper component that'll render a <section> tag with some styles
+const Wrapper = styled.section`
+  padding: 4em;
+`;
+
+const Title = styled.div`
+  font-size: 2.5em;
+  text-align: center;
+  color: palevioletred;
+`;
+
+const Text = styled.div`
+  font-size: 1.5em;
+  text-align: center;
+  color: cornflowerblue;
+`;
 
 class App extends Component {
   //Set 3 state values: accounts, balance, and network
@@ -25,6 +44,11 @@ class App extends Component {
   getAddress = async () =>{
     //accounts is an array containing account addresses belonging to user
     var accounts = await web3.eth.getAccounts();
+    // If user is not connected to MetaMask, exit
+    if(accounts[0] == null){
+	alert('you need to sign into MetaMask');
+	return;
+    }
     //set accounts state and call getBalance()
     this.setState({accounts: accounts});
     this.getBalance();
@@ -66,19 +90,25 @@ class App extends Component {
     this.setState({network: network})
   }
     
-  //TODO: add if statement for user not connected to metamask
-  //TODO: find better way to render info than <li>
   //render states
   render() {
     return(
-      <div>
-        <li>Account address: {this.state.accounts[0]}</li>
-        <li>Account balance: {this.state.balance}</li>
-        <li>Current Network: {this.state.network}</li>
+      <Wrapper>
+        <Title>Account address </Title>
+ 	<Text> {this.state.accounts[0]} </Text> 
 	<br />
-	<Form setInputValue={this.setInputValue} />
-	<li>You wrote: {this.state.inputValue}</li>
-      </div>
+        <Title>Account balance </Title>
+ 	<Text> {this.state.balance} </Text>
+	<br />
+        <Title>Current Network </Title>
+	<Text> {this.state.network} </Text>
+	<br />
+	<Title>
+	  <Form setInputValue={this.setInputValue} />
+	</Title>
+	<Title>You wrote </Title>
+	<Text> {this.state.inputValue} </Text>
+      </Wrapper>
     );
   }
 }

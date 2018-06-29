@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 
 class Form extends Component {
     // Set initial state value
@@ -22,8 +23,10 @@ class Form extends Component {
 	return (
 	  <div>
 	    <form onSubmit={this.handleSubmit}>
+	      <br />
 	      <label> 
 	        Enter anything! 
+	        <br />
 		<input type="text" name="data" value={this.state.value} onChange={this.handleChange}/>
 		<input type="submit" value="Submit" />
 	      </label>
