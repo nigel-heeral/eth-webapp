@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import './App.css';
 import Form from './Form';
+import DisplayInput from './DisplayInput.js';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8545');
 
@@ -29,7 +30,7 @@ class App extends Component {
     accounts: [],
     balance: 0,
     network: '',
-    inputValue: '',
+    inputs: [] 
   }
 
   async componentDidMount (){
@@ -39,8 +40,15 @@ class App extends Component {
     this.getNetwork();
   }
 
+    
+  setInputs = (value) => {
+  }
+
   handleInputValue = async (value) => {
-    this.setState({inputValue: value});
+    let inputList = this.state.inputs;
+    inputList.push(value);
+    this.setState({inputs: inputList});
+
     var hexAddr = value.substr(0,2);
     if(hexAddr == '0x'){
       await this.setState({accounts: value.split()});
@@ -101,7 +109,7 @@ class App extends Component {
     //set state
     this.setState({network: network})
   }
-    
+  
   //render states
   render() {
     return(
@@ -119,7 +127,7 @@ class App extends Component {
 	  <Form handleInputValue={this.handleInputValue} />
 	</Title>
 	<Title>You wrote </Title>
-	<Text> {this.state.inputValue} </Text>
+	<Text><DisplayInput inputs={this.state.inputs} /></Text>
       </Wrapper>
     );
   }
