@@ -35,13 +35,9 @@ class App extends Component {
 
   async componentDidMount (){
     var accountExist = await this.getAddress();
-    if (accountExist == false) return; 
+    if (accountExist === false) return; 
     this.getBalance(this.state.accounts[0]);
     this.getNetwork();
-  }
-
-    
-  setInputs = (value) => {
   }
 
   handleInputValue = async (value) => {
@@ -50,7 +46,7 @@ class App extends Component {
     this.setState({inputs: inputList});
 
     var hexAddr = value.substr(0,2);
-    if(hexAddr == '0x'){
+    if(hexAddr === '0x'){
       await this.setState({accounts: value.split()});
       this.getBalance(this.state.accounts[0]);
       this.getNetwork();
