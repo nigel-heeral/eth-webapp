@@ -32,12 +32,26 @@ class App extends Component {
     inputValue: '',
   }
 
-  componentDidMount(){
-    this.getAddress();
+  async componentDidMount (){
+    var accountExist = await this.getAddress();
+    if (accountExist == false) return; 
+    this.getBalance(this.state.accounts[0]);
+    this.getNetwork();
   }
 
-  setInputValue = (value) => {
+  handleInputValue = async (value) => {
     this.setState({inputValue: value});
+    var hexAddr = value.substr(0,2);
+    if(hexAddr == '0x'){
+      await this.setState({accounts: value.split()});
+      this.getBalance(this.state.accounts[0]);
+      this.getNetwork();
+    }
+    else{
+      this.setState({accounts: []});
+      this.setState({balance: null});
+      this.setState({network: ''});
+    }
   }
   
   //sets accounts state
@@ -47,22 +61,20 @@ class App extends Component {
     // If user is not connected to MetaMask, exit
     if(accounts[0] == null){
 	alert('you need to sign into MetaMask');
-	return;
+	return false;
     }
     //set accounts state and call getBalance()
     this.setState({accounts: accounts});
-    this.getBalance();
   }
 
   //sets balance state
-  getBalance = async () => {
+  getBalance = async (accountAddress) => {
     //var balance = the integer value of wei balance of the first address in array accounts
-    var balance = await web3.eth.getBalance(this.state.accounts[0]);
+    var balance = await web3.eth.getBalance(accountAddress);
     //wei converted to ether
     balance = web3.utils.fromWei(balance.toString(), "ether");
     //set state and call getNetwork()
     this.setState({balance: balance})
-    this.getNetwork()
   }
 
   //sets network state
@@ -104,7 +116,7 @@ class App extends Component {
 	<Text> {this.state.network} </Text>
 	<br />
 	<Title>
-	  <Form setInputValue={this.setInputValue} />
+	  <Form handleInputValue={this.handleInputValue} />
 	</Title>
 	<Title>You wrote </Title>
 	<Text> {this.state.inputValue} </Text>

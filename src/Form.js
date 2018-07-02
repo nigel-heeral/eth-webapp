@@ -10,7 +10,7 @@ class Form extends Component {
 
     // Take in user string input and send to parent value
     handleSubmit = (e) => {
-	this.props.setInputValue(this.state.value);
+	this.props.handleInputValue(this.state.value);
 	e.preventDefault();
     }
 
