@@ -4,8 +4,7 @@ import './App.css';
 import Form from './Form';
 import DisplayInput from './DisplayInput.js';
 var Web3 = require('web3');
-var web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8545');
-
+var web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
 
 // Create a Wrapper component that'll render a <section> tag with some styles
 const Wrapper = styled.section`
@@ -30,31 +29,35 @@ class App extends Component {
     accounts: [],
     balance: 0,
     network: '',
-    inputs: [] 
+    input: '',
+    inputs: []
   }
 
   async componentDidMount (){
-    var accountExist = await this.getAddress();
-    if (accountExist === false) return; 
-    this.getBalance(this.state.accounts[0]);
+    const account= await this.getAddress();
+    console.log(account);
+    if (!account) return; 
+    this.getBalance(account);
     this.getNetwork();
   }
 
-  handleInputValue = async (value) => {
-    let inputList = this.state.inputs;
-    inputList.push(value);
-    this.setState({inputs: inputList});
+  handleInputChange = async (e) => {
+    this.setState({input: e.target.value})
+  }
 
-    var hexAddr = value.substr(0,2);
+  handleInputSubmit = async () => {
+    const input = this.state.input;
+    this.setState((prevState) => ({
+	inputs: prevState.inputs.concat(input)
+    }));
+    var hexAddr = input.substr(0,2);
     if(hexAddr === '0x'){
-      await this.setState({accounts: value.split()});
+      await this.setState({accounts: [input]});
       this.getBalance(this.state.accounts[0]);
       this.getNetwork();
     }
     else{
-      this.setState({accounts: []});
-      this.setState({balance: null});
-      this.setState({network: ''});
+      this.setState({accounts: [], balance: null, network: ''});
     }
   }
   
@@ -68,17 +71,18 @@ class App extends Component {
 	return false;
     }
     //set accounts state and call getBalance()
-    this.setState({accounts: accounts});
+    this.setState({accounts});
+    return accounts[0];
   }
 
   //sets balance state
   getBalance = async (accountAddress) => {
     //var balance = the integer value of wei balance of the first address in array accounts
-    var balance = await web3.eth.getBalance(accountAddress);
+    const rawBalance = await web3.eth.getBalance(accountAddress);
     //wei converted to ether
-    balance = web3.utils.fromWei(balance.toString(), "ether");
+    const balance = web3.utils.fromWei(rawBalance.toString(), "ether");
     //set state and call getNetwork()
-    this.setState({balance: balance})
+    this.setState({balance})
   }
 
   //sets network state
@@ -103,7 +107,7 @@ class App extends Component {
         network = 'Unknown Network';
     }
     //set state
-    this.setState({network: network})
+    this.setState({network})
   }
   
   //render states
@@ -120,10 +124,12 @@ class App extends Component {
 	<Text> {this.state.network} </Text>
 	<br />
 	<Title>
-	  <Form handleInputValue={this.handleInputValue} />
+	  <Form inputValue={this.state.input} handleInputChange={this.handleInputChange} handleInputSubmit={this.handleInputSubmit} />
 	</Title>
 	<Title>You wrote </Title>
-	<Text><DisplayInput inputs={this.state.inputs} /></Text>
+	<Text>
+	<DisplayInput inputs={this.state.inputs}></DisplayInput>
+	</Text>
       </Wrapper>
     );
   }

@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 
-class DisplayInput extends Component {
-    constructor(props) {
-	super(props);
-	this.nonce = 0;
-    }
+/* class DisplayInput extends Component {
     render() {
-	let list = this.props.inputs.map(input => {
-	    return <li key={this.nonce++}>{ input }</li>
+	let list = this.props.inputs.map((input, index) => {
+	    return <li key={input + index}>{ input }</li>
 	});
 	return (
 	    <div>
@@ -15,6 +11,18 @@ class DisplayInput extends Component {
 	    </div>
 	)
     }
+} */
+
+function DisplayInput(props) {
+	let list = props.inputs.map((input, index) => {
+	    return <li key={input + index}>{ input }</li>
+	});
+	return (
+	    <div>{props.children}
+		{list}
+	    </div>
+	)
+
 }
 
 export default DisplayInput;

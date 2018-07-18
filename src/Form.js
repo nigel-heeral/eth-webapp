@@ -10,13 +10,8 @@ class Form extends Component {
 
     // Take in user string input and send to parent value
     handleSubmit = (e) => {
-	this.props.handleInputValue(this.state.value);
+	this.props.handleInputSubmit();
 	e.preventDefault();
-    }
-
-    // Consistently update state of input value
-    handleChange = (e) => {
-	this.setState({value: e.target.value});
     }
 
     render() {
@@ -27,7 +22,7 @@ class Form extends Component {
 	      <label> 
 	        Enter anything! 
 	        <br />
-		<input type="text" name="data" value={this.state.value} onChange={this.handleChange}/>
+		<input type="text" name="data" ref="input" value={this.props.inputValue} onChange={this.props.handleInputChange}/>
 		<input type="submit" value="Submit" />
 	      </label>
 	    </form>
